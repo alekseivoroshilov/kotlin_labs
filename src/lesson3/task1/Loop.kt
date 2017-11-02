@@ -61,7 +61,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Например, число 1 содержит 1 цифру, 456 -- 3 цифры, 65536 -- 5 цифр.
  */
 fun digitNumber(n: Int): Int{
-    var num = n
+    var num = Math.abs(n)
     var i = 1
     while(num > 9){
         num /= 10
@@ -76,9 +76,17 @@ fun digitNumber(n: Int): Int{
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int{ // => fib(n) = fib(n-1) + fib(n-2)
-    if(n<3) return 1
-    return fib(n-1) + fib(n-2)
+fun fib(n: Int): Int{
+    if(n < 3) return 1
+    var f1 = fib(1)
+    var f2 = fib(2)
+    var f3 = 0
+    for (i in 3 .. n){
+        f3 = f1 + f2
+        f1 = f2
+        f2 = f3
+    }
+    return f3
 }
 
 /**

@@ -228,11 +228,14 @@ fun factorizeToString(n: Int): String =
 fun convert(n: Int, base: Int): List<Int>{
     val list = mutableListOf<Int>()
     var num = n
-    while(num > 0){
-        list.add(num % base)
-        num /= base
+    if(n != 0) {
+        while (num > 0) {
+            list.add(num % base)
+            num /= base
+        }
+        return list.reversed()
     }
-    return list.reversed()
+    else return listOf(0)
 }
 
 /**
@@ -247,11 +250,14 @@ fun convertToString(n: Int, base: Int): String{
     val abc = "abcdefghijklmnopqrstuvwxyz"
     val list = convert(n, base)
     var buf = StringBuffer(list.size)
-    for(i in 0 until list.size){
-        if(list[i] > 9) buf.append(abc[list[i] - 10])
-        else buf.append(list[i])
+    if(n != 0) {
+        for (i in 0 until list.size) {
+            if (list[i] > 9) buf.append(abc[list[i] - 10])
+            else buf.append(list[i])
+        }
+        return buf.toString()
     }
-    return buf.toString()
+    else return "0"
 }
 
 /**

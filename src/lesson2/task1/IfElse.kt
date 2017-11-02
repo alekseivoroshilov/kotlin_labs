@@ -54,9 +54,9 @@ fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double{
     val hS = ( t1 * v1 + t2 * v2 + t3 * v3) / 2.0
-    return when(hS){
-        in 0.0..(t1 * v1) -> hS / v1
-        in (t1 * v1)..(t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
+    return when{
+        hS < t1 * v1 -> hS / v1
+        hS in (t1 * v1)..(t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
         else -> t1 + t2 + (hS - t1 * v1 - t2 * v2) / v3
     }
 }
@@ -73,8 +73,8 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int{
-    val rook1: Int = (rookX1 - kingX) * (rookY1 - kingY) // при наличии пересечений =0
-    val rook2: Int = (rookX2 - kingX) * (rookY2 - kingY) // аналогично для 2-й ладьи
+    val rook1 = (rookX1 - kingX) * (rookY1 - kingY) // при наличии пересечений =0
+    val rook2 = (rookX2 - kingX) * (rookY2 - kingY) // аналогично для 2-й ладьи
     return when(rook1 + rook2){
         0 ->  3 // r1==r2==0
         rook1 ->  2 // r2==0
@@ -96,12 +96,12 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int{
-    val bishop: Int = Math.abs(bishopX - kingX) - Math.abs(bishopY - kingY) // при наличиии пересечения =0
-    val rook: Int = (rookX - kingX) * (rookY - kingY) // аналогично
-    return when(rook + bishop){
-        0 -> 3 // r==b==0
-        bishop -> 1 // r==0
-        rook -> 2 // b==0
+    val bishop = Math.abs(kingX - bishopX) == Math.abs(kingY - bishopY) // true если угрожает
+    val rook = rookX == kingX || rookY == kingY // аналогично
+    return when{
+        bishop && rook -> 3 // r==b==0
+        bishop -> 2 // r==0
+        rook -> 1 // b==0
         else -> 0 // r>0 && b>0
     }
 }
