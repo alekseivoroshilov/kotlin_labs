@@ -35,18 +35,13 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 
-fun ageDescription(age: Int): String {
-    val str: String
-    if(age%100 in 11..14) str="$age лет"
-    else{
-        if(age%10==1) str="$age год"
-        else {
-            if(age%10 in 2..4) str="$age года"
-            else str="$age лет"
-        }
+fun ageDescription(age: Int): String =
+    when {
+        age % 100 in 11..14 -> "$age лет"
+        age % 10 == 1 -> "$age год"
+        age % 10 in 2..4 -> "$age года"
+        else -> "$age лет"
     }
-    return str
-}
 
 /**
  * Простая
@@ -58,11 +53,11 @@ fun ageDescription(age: Int): String {
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double{
-    val hS = (t1*v1 + t2*v2 + t3*v3)/2.0
-    if(hS <= t1*v1) return hS/v1
-    else{
-        if(hS <= t1*v1+t2*v2) return t1 + (hS - t1*v1)/v2
-        else return t1 + t2 + (hS - t1*v1 - t2*v2)/v3
+    val hS = ( t1 * v1 + t2 * v2 + t3 * v3) / 2.0
+    return when(hS){
+        in 0.0..(t1 * v1) -> hS / v1
+        in (t1 * v1)..(t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
+        else -> t1 + t2 + (hS - t1 * v1 - t2 * v2) / v3
     }
 }
 
@@ -78,16 +73,14 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int{
-    val r1: Int = (rookX1-kingX)*(rookY1-kingY) // при наличии пересечений =0
-    val r2: Int = (rookX2-kingX)*(rookY2-kingY) // аналогично для 2-й ладьи
-    if(r1*r2==0){ // угроза есть
-        if(r1==0 && r2==0) return 3 // 2 угрозы
-        else{
-            if(r1==0) return 1 // угроза только от 1 ладьи
-            else return 2 // угроза только от 2 ладьи
-        }
+    val rook1: Int = (rookX1 - kingX) * (rookY1 - kingY) // при наличии пересечений =0
+    val rook2: Int = (rookX2 - kingX) * (rookY2 - kingY) // аналогично для 2-й ладьи
+    return when(rook1 + rook2){
+        0 ->  3 // r1==r2==0
+        rook1 ->  2 // r2==0
+        rook2 ->  1 // r1==0
+        else ->  0 // r1>0 && r2>0
     }
-    else return 0 // угроз нет
 }
 
 /**
@@ -103,16 +96,14 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int{
-    val b: Int = Math.abs(bishopX-kingX) - Math.abs(bishopY-kingY) // при наличиии пересечения =0
-    val r: Int = (rookX-kingX)*(rookY-kingY) // аналогично
-    if(r*b==0){ // угроза есть
-        if(r==0 && b==0) return 3 // 2 угрозы
-        else{
-            if(r==0) return 1 // угроза только от ладьи
-            else return 2 // угроза только от слона
-        }
+    val bishop: Int = Math.abs(bishopX - kingX) - Math.abs(bishopY - kingY) // при наличиии пересечения =0
+    val rook: Int = (rookX - kingX) * (rookY - kingY) // аналогично
+    return when(rook + bishop){
+        0 -> 3 // r==b==0
+        bishop -> 1 // r==0
+        rook -> 2 // b==0
+        else -> 0 // r>0 && b>0
     }
-    else return 0 // угроз нет
 }
 
 /**
@@ -124,13 +115,13 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int{
-    if(a>=b+c || b>=a+c || c>=b+a) return (-1)
-    else{
-        if(a*a+b*b==c*c || a*a+c*c==b*b || b*b+c*c==a*a) return 1
-        else{
-            if(a*a+b*b>c*c && a*a+c*c>b*b && b*b+c*c>a*a) return 0
-            else return 2
-        }
+    val max = Math.max(Math.max(a, b), c)
+    val pyth = 2.0 * max * max - (a * a + b * b + c * c) // c^2 - (a^2 + b^2)
+    return when{
+        a + b + c - max <= max -> -1
+        pyth == 0.0 -> 1
+        pyth > 0.0 -> 2
+        else -> 0
     }
 }
 
@@ -142,18 +133,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
+    when{
+        a in c..d -> Math.min(b, d) - a
+        c in a..b -> Math.min(b, d) - c
+        else -> -1
+    }
 
-//fun main(args: Array<String>){
-//    println(segmentLength(5,20,7,22))
-//}
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int{
-    if(a in c..d){
-        if(b in c..d) return b-a
-        else return d-a
-    }
-    if(c in a..b){
-        if(d in a..b) return d-c
-        else return b-c
-    }
-    return (-1)
-}

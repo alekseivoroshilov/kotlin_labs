@@ -1,12 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson4.task1
 
+//import jdk.nashorn.internal.ir.annotations.Immutable
 import lesson1.task1.discriminant
-
-fun main(args: Array<String>){
-    mean(listOf(12.0,13.0,14.0,15.0))
-}
-
 /**
  * Пример
  *
@@ -101,7 +97,8 @@ fun isPalindrome(str: String): Boolean {
  * По имеющемуся списку целых чисел, например [3, 6, 5, 4, 9], построить строку с примером их суммирования:
  * 3 + 6 + 5 + 4 + 9 = 27 в данном случае.
  */
-fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", postfix = " = ${list.sum()}")
+fun buildSumExample(list: List<Int>) =
+        list.joinToString(separator = " + ", postfix = " = ${list.sum()}")
 
 /**
  * Простая
@@ -112,8 +109,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double{
     var abs = 0.0
-    for(e in v) abs += Math.pow(e,2.0)
-    return abs
+    for(e in v) abs += Math.pow(e, 2.0)
+    return Math.sqrt(abs)
 }
 
 /**
@@ -123,8 +120,10 @@ fun abs(v: List<Double>): Double{
  */
 fun mean(list: List<Double>): Double{
     var aver = 0.0
-    for(e in list) aver+=e
-    aver/=list.size
+    if(list.isNotEmpty()) {
+        for (e in list) aver += e
+        return aver / list.size
+    }
     return aver
 }
 
@@ -163,7 +162,13 @@ fun times(a: List<Double>, b: List<Double>): Double{
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double = TODO()
+fun polynom(p: List<Double>, x: Double): Double {
+    var res = 0.0
+    if(p.isNotEmpty())
+        for(i in 0 until p.size)
+            res += p[i] * Math.pow(x, i.toDouble())
+    return res
+}
 
 /**
  * Средняя
@@ -175,7 +180,13 @@ fun polynom(p: List<Double>, x: Double): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
+fun accumulate(list: MutableList<Double>): MutableList<Double>{
+    if(list.isNotEmpty()) {
+        for (i in 1 until list.size)
+            list[i] += list[i-1]
+    }
+    return list
+}
 
 /**
  * Средняя
@@ -184,7 +195,19 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int>{
+    var list = mutableListOf<Int>()
+    var num = n
+    var fact = 2
+    while(num > 1){
+        if(num % fact == 0) {
+            list.add(fact)
+            num /= fact
+        }
+        else fact++
+    }
+    return list
+}
 
 /**
  * Сложная
@@ -192,7 +215,8 @@ fun factorize(n: Int): List<Int> = TODO()
  * Разложить заданное натуральное число n > 1 на простые множители.
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String =
+    factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -201,7 +225,15 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int>{
+    val list = mutableListOf<Int>()
+    var num = n
+    while(num > 0){
+        list.add(num % base)
+        num /= base
+    }
+    return list.reversed()
+}
 
 /**
  * Сложная
@@ -211,7 +243,16 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String{
+    val abc = "abcdefghijklmnopqrstuvwxyz"
+    val list = convert(n, base)
+    var buf = StringBuffer(list.size)
+    for(i in 0 until list.size){
+        if(list[i] > 9) buf.append(abc[list[i] - 10])
+        else buf.append(list[i])
+    }
+    return buf.toString()
+}
 
 /**
  * Средняя
@@ -220,7 +261,22 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int{
+    var pow = digits.size
+    var res = 0
+    for(e in digits){
+        pow--
+        res += e * intPow(base, pow)
+    }
+    return res
+}
+
+fun intPow(num: Int, pow: Int): Int{ // = Math.pow(Int)
+    var res = 1
+    for(i in 1..pow)
+        res *= num
+    return res
+}
 
 /**
  * Сложная
@@ -231,7 +287,19 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int{
+    var pow = str.length
+    var res = 0
+    var i: Int
+    for(c in str){
+        i = c.toInt()
+        if(i <= 57) i -= 48 // {0-9} = {48-57}
+        else i -= 87 // {a-z} = {97-122}      (a-87=10, b-87=11 и т.д.)
+        pow--
+        res += i * intPow(base, pow)
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -241,7 +309,21 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String{
+    val arab = arrayOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val rome = arrayOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
+    var buf = StringBuffer()
+    var num = n
+    var i = rome.size - 1 // указатель на последний элемент rome
+    while(num > 0){ //
+        if(num < arab[i]) i--
+        else {
+            buf.append(rome[i])
+            num -= arab[i]
+        }
+    }
+    return buf.toString()
+}
 
 /**
  * Очень сложная
