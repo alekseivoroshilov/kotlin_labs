@@ -247,17 +247,14 @@ fun convert(n: Int, base: Int): List<Int>{
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String{
-    val abc = "abcdefghijklmnopqrstuvwxyz"
     val list = convert(n, base)
-    var buf = StringBuffer(list.size)
-    if(n != 0) {
-        for (i in 0 until list.size) {
-            if (list[i] > 9) buf.append(abc[list[i] - 10])
-            else buf.append(list[i])
-        }
-        return buf.toString()
+    var buf = StringBuilder(list.size)
+    if(n == 0) return "0"
+    for (i in 0 until list.size) {
+        if (list[i] > 9) buf.append((87 + list[i]).toChar()) // a = 97, b = 98, c = 99 ...
+        else buf.append(list[i])
     }
-    else return "0"
+    return buf.toString()
 }
 
 /**
@@ -318,7 +315,7 @@ fun decimalFromString(str: String, base: Int): Int{
 fun roman(n: Int): String{
     val arab = arrayOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
     val rome = arrayOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
-    var buf = StringBuffer()
+    var buf = StringBuilder()
     var num = n
     var i = rome.size - 1 // указатель на последний элемент rome
     while(num > 0){ //
@@ -338,4 +335,70 @@ fun roman(n: Int): String{
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String{
+    var num = n
+    val res = mutableListOf<String>()
+    val words = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь",
+            "девять", "десять", "одиннадцать", "двенадцать", "триннадцать", "четырнадцать",
+            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать",
+            "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят",
+            "семьдесят", "восемьдесят", "девяносто",
+            "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
+            "семьсот", "восемьсот", "девятьсот")
+    // инициализация списка чисел, соответствующих списку их прописных обозначений
+    val numbers = mutableListOf<Int>()
+    for(i in 1..20) numbers.add(i)
+    for(i in 30..100 step 10) numbers.add(i)
+    for(i in 200..900 step 100) numbers.add(i)
+
+    if(num >= 1000){
+        res += getHundredsWords(num / 1000, words, numbers, true)
+        res.add(getThousandsWords(num / 1000))
+        num %= 1000
+    }
+    res += getHundredsWords(num, words, numbers)
+
+    return res.joinToString(separator = " ")
+}
+
+fun getThousandsWords(n: Int): String {
+    var num = n
+    if(num % 100 > 19) num %= 10
+    return when(num % 100){
+        1 -> "тысяча"
+        in 2..4 -> "тысячи"
+        else -> "тысяч"
+    }
+}
+
+fun getHundredsWords(n: Int, words: List<String>, numbers: MutableList<Int>): List<String>{
+    var res = mutableListOf<String>()
+    var num = n
+    var i = numbers.size - 1
+    while(num > 0){
+        if(num < numbers[i]) i--
+        else{
+            res.add(words[i])
+            num -= numbers[i]
+        }
+    }
+    return res
+}
+
+fun getHundredsWords(n: Int, words: List<String>, numbers: MutableList<Int>, flag: Boolean): List<String>{
+    var res = mutableListOf<String>()
+    var num = n
+    var i = numbers.size - 1
+    while(num > 0){
+        if(num < numbers[i]) i--
+        else{
+            when(num) {
+                1 ->  res.add("одна")
+                2 -> res.add("две")
+                else -> res.add(words[i])
+            }
+            num -= numbers[i]
+        }
+    }
+    return res
+}

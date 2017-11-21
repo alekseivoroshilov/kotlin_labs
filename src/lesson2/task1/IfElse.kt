@@ -53,10 +53,10 @@ fun ageDescription(age: Int): String =
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double{
-    val hS = ( t1 * v1 + t2 * v2 + t3 * v3) / 2.0
+    val hS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
     return when{
         hS < t1 * v1 -> hS / v1
-        hS in (t1 * v1)..(t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
+        hS < (t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
         else -> t1 + t2 + (hS - t1 * v1 - t2 * v2) / v3
     }
 }
@@ -118,7 +118,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
     val max = Math.max(Math.max(a, b), c)
     val pyth = 2.0 * max * max - (a * a + b * b + c * c) // c^2 - (a^2 + b^2)
     return when{
-        a + b + c - max <= max -> -1
+        a + b + c <= 2 * max -> -1
         pyth == 0.0 -> 1
         pyth > 0.0 -> 2
         else -> 0

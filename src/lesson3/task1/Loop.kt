@@ -102,7 +102,7 @@ fun lcm(m: Int, n: Int): Int{
         if(a > b) a -= b
         else b -= a
     }
-    return m*n/a  // НОК(m,n) = m*n/НОД(m,n)
+    return m * n / a  // НОК(m,n) = m*n/НОД(m,n)
 }
 
 /**
@@ -112,7 +112,7 @@ fun lcm(m: Int, n: Int): Int{
  */
 fun minDivisor(n: Int): Int{
     var i = 2
-    while(n % i != 0) i++
+    while(n % i != 0 && i < Math.sqrt(n.toDouble())) i++
     return i
 }
 
@@ -136,7 +136,7 @@ fun maxDivisor(n: Int): Int{
  */
 fun isCoPrime(m: Int, n: Int): Boolean{
     var i = Math.min(m, n)
-    while(m % i != 0 || n %i != 0) i--
+    while(m % i != 0 || n % i != 0) i--
     return i == 1
 }
 
@@ -208,11 +208,11 @@ fun cos(x: Double, eps: Double): Double{
  * Не использовать строки при решении задачи.
  */
 fun revert(n: Int): Int{
-    var i=n
-    var res=0
-    while(i>0){
-        res = res*10 + i%10
-        i/=10
+    var i = n
+    var res = 0
+    while(i > 0){
+        res = res * 10 + i % 10
+        i /= 10
     }
     return res
 }
@@ -224,19 +224,7 @@ fun revert(n: Int): Int{
  * первая цифра равна последней, вторая -- предпоследней и так далее.
  * 15751 -- палиндром, 3653 -- нет.
  */
-fun isPalindrome(n: Int): Boolean{
-    var k=1; var l: Int; var r: Int
-    var num = n
-    while(num/k>=10) k*=10 // k= pow(10, кол-во_цифр - 1)
-    while(num>=10) { // пока в num >1 цифры
-        l = num/k // крайняя цифра слева
-        r = num%10 // крайняя цифра справа
-        if (l!=r) return false
-        num = (num % k) / 10 // отсечение крайних цифр
-        k/=100 // (т.к. кол-во цифр уменьшилось на 2)
-    }
-    return true
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя
@@ -246,8 +234,8 @@ fun isPalindrome(n: Int): Boolean{
  */
 fun hasDifferentDigits(n: Int): Boolean{ // попарное сравнение символов
     var str = n.toString()
-    for(i in 0..(str.length-2))
-        if(str[i]!=str[i+1]) return true
+    for(i in 0..(str.length - 2))
+        if(str[i] != str[i + 1]) return true
     return false
 }
 
@@ -258,17 +246,22 @@ fun hasDifferentDigits(n: Int): Boolean{ // попарное сравнение 
  * 149162536496481100121144...
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
+fun main(args: Array<String>){
+//    println(squareSequenceDigit(1)) // 1
+//    println(squareSequenceDigit(2)) // 4
+//    println(squareSequenceDigit(7)) // 5
+    println(squareSequenceDigit(12)) // 6
+}
 fun squareSequenceDigit(n: Int): Int{
     var i = 0
     var j = 0
-    var buf: String
     while(j < n){ // пока число цифр не достигло требуемого
         i++
         j += digitNumber(i*i) // суммирование кол-ва цифр квадратов
     }
-    buf = (i*i).toString()
-    i = buf.length - (j - n + 1)
-    return (buf[i].toInt() - 48)
+    var res = i*i
+    for(c in n until j) res /= 10
+    return res % 10
 }
 
 /**
@@ -281,12 +274,11 @@ fun squareSequenceDigit(n: Int): Int{
 fun fibSequenceDigit(n: Int): Int{
     var i = 0
     var j = 0
-    var buf: String
     while(j < n){ // пока число цифр не достигло требуемого
         i++
         j += digitNumber(fib(i))
     }
-    buf = fib(i).toString()
-    i = buf.length - (j - n + 1)
-    return (buf[i].toInt() - 48)
+    var res = fib(i)
+    for(c in n until j) res /= 10
+    return res % 10
 }
