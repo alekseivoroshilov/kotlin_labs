@@ -1,6 +1,9 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson5.task1
 
+import java.util.*
+import kotlin.collections.LinkedHashMap
+
 //import jdk.nashorn.internal.runtime.regexp.RegExp
 
 /**
@@ -78,7 +81,7 @@ fun dateStrToDigit(str: String): String {
             "августа", "сентября", "октября", "ноября", "декабря")
     val res = listOf(parts[0].toInt(), months.indexOf(parts[1]) + 1, parts[2].toInt())
     if (res[0] !in 1..31 || res[1] == 0) return "" // некорректное число || месяц
-    return String.format("%02d.%02d.%4d", res[0], res[1], res[2])
+    return String.format("%02d.%02d.%d", res[0], res[1], res[2])
 }
 
 /**
@@ -89,7 +92,7 @@ fun dateStrToDigit(str: String): String {
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateDigitToStr(digital: String): String{
-    val format = Regex("""^([0-9]{2}).([0-9]{2}).([0-9]{4})$""")
+    val format = Regex("""^([0-9]{2}).([0-9]{2}).([0-9]+)$""")
     if(!digital.matches(format)) return "" // соответствие формату
     val parts = digital.split(".")
     val months = arrayOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
@@ -129,15 +132,15 @@ fun flattenPhoneNumber(phone: String): String{
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int{
-    val format = Regex("""^([0-9]+|%|-)(\s([0-9]+|%|-)){0,}$""")
+    val format = Regex("""^([0-9]+|%|-)(\s+([0-9]+|%|-))*$""")
     val d = Regex("""[0-9]""")
     if(!jumps.matches(format) || !jumps.contains(d)) return -1 // не format || не содержит цифр
     val numeric = Regex("""%|-""").replace(jumps,"")
-    val nums = Regex("""\s+""").split(numeric)
-    val res = mutableListOf(0)
+    val nums = Regex("""\s+""").split(numeric).toMutableList()
+    val res = mutableListOf(0.0)
     for(e in nums)
-        res.add(e.toInt())
-    return res.max()!! // nullableInt to nonNullableInt
+        if(e != "") res.add(e.toDouble())
+    return res.max()!!.toInt() // nullableInt to nonNullableInt
 }
 
 /**
@@ -150,13 +153,14 @@ fun bestLongJump(jumps: String): Int{
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int{
-    val format = Regex("""^(([0-9]+)\s(%|\+|-)+)(\s(([0-9]+)\s(%|\+|-)+)){0,}$""")
+fun bestHighJump(jumps: String): Int {
+    val format = Regex("""^(([0-9]+)\s(%|\+|-)+)(\s(([0-9]+)\s(%|\+|-)+))*$""")
     if(!jumps.matches(format)) return -1
     val parts = jumps.split(" ")
     val res = mutableListOf(0)
     for(i in parts.size - 1 downTo 0) // чтение "попыток" с конца
        if(parts[i].contains("+")) res.add(parts[i - 1].toInt()) // если высота взята (есть +), запись в res
+    if(res.size == 1) return -1
     return res.max()!!
 }
 
@@ -169,7 +173,17 @@ fun bestHighJump(jumps: String): Int{
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val format = Regex("""^([0-9]+)(\s+(\+|-)\s+([0-9]+))*$""")
+    if(!expression.matches(format)) throw IllegalArgumentException("for input string \"$expression\"")
+    val parts = expression.split(" ")
+    var res = parts[0].toInt()
+    for(i in 1 until parts.size step 2){ // чтение символов операций
+        if(parts[i] == "-") res -= parts[i + 1].toInt()
+        else res += parts[i + 1].toInt()
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -180,7 +194,15 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val parts = str.toLowerCase().split(" ")
+    val indexes = mutableListOf(0) // индекс начала 1 слова = 0
+    for(i in 0 until str.length)
+        if(str[i] == ' ') indexes.add(i + 1) // индекс пробела + 1 = индекс начала след. слова
+    for(i in 0 until parts.size - 1)
+        if(parts[i] == parts[i + 1]) return indexes[i]
+    return (-1)
+}
 
 /**
  * Сложная
@@ -193,7 +215,19 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть положительными
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val format = Regex("""^([А-Яа-я]+)\s([0-9]+.[0-9]+)(;\s([А-Яа-я]+)\s([0-9]+.[0-9]+))*""")
+    if(!description.matches(format)) return ""
+    val parts = Regex("""\s|(;\s)""").split(description)
+    var max = parts[1].toFloat()
+    var max_index = 1
+    for(i in 3 until parts.size step 2)
+        if(parts[i].toFloat() > max){
+            max = parts[i].toFloat()
+            max_index = i
+        }
+    return parts[max_index - 1]
+}
 
 /**
  * Сложная
@@ -206,7 +240,23 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val format = Regex("""[CDILMVX]+""")
+    val dec = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100,
+            'D' to 500, 'M' to 1000)
+    var res = 0
+    var bigger = 0
+    if(!roman.matches(format)) return -1
+    for(i in roman.length - 1 downTo 0){
+        if(dec[roman[i]]!! < bigger)
+            res -= dec[roman[i]]!!
+        else {
+            bigger = dec[roman[i]]!!
+            res += bigger
+        }
+    }
+    return res
+}
 
 /**
  * Очень сложная
@@ -244,4 +294,49 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    var sensor = cells / 2 // датчик
+    var cmd_indexer = 0 // указатель на выполняемую команду
+    var cmd_counter = limit // счетчик оставшихся команд
+    val brackets = commandsChecking(commands)
+    val brackets_r = brackets.map{it.value to it.key}.toMap() // brackets.invert()
+    val conv = mutableListOf<Int>() // конвейер
+    for(i in 0 until cells) conv.add(0)
+
+    while(cmd_counter > 0 && cmd_indexer < commands.length){
+        when(commands[cmd_indexer]){
+            '+' -> conv[sensor]++
+            '-' -> conv[sensor]--
+            '[' -> if(conv[sensor] == 0) cmd_indexer = brackets[cmd_indexer]!! // переход к закрывающей скобке
+            ']' -> if(conv[sensor] != 0) cmd_indexer = brackets_r[cmd_indexer]!! // возврат к открывающей скобке
+            '>' -> sensor++
+            '<' -> sensor--
+        }
+        if(sensor !in 0..cells) throw IllegalStateException("shift commands\ncells = $cells ; sensor = $sensor")
+        cmd_indexer++
+        cmd_counter--
+    }
+    return conv
+}
+/*
+* Проверка строки команд на корректность
+* возвращает карту индексов скобок, в которой ключ - индекс открывающей скобки
+* значение - индекс соответствующей ей закрывающей скобки
+*/
+fun commandsChecking(line: String): Map<Int, Int> {
+    val format = Regex("""[<>\+\-\[\]\s]+""")
+    if(!line.matches(format)) throw IllegalArgumentException("unacceptable symbols")
+    val opening = mutableListOf<Int>() // список открывающих скобок (используется как стек)
+    val brackets = mutableMapOf<Int, Int>() // для хранения индексов соответствующих скобок
+    for(i in 0 until line.length){
+        if(line[i] == '['){
+            opening.add(i)
+        }
+        else if(line[i] == ']'){
+            if(opening.isEmpty()) throw IllegalArgumentException("brackets") // закр. > откр.
+            brackets.put(opening.removeAt(opening.size - 1), i)
+        }
+    }
+    if(opening.isNotEmpty()) throw IllegalArgumentException("brackets") // откр. > закр.
+    return brackets.toMap()
+}

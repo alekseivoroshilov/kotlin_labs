@@ -107,7 +107,7 @@ fun buildSumExample(list: List<Int>) =
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double{
+fun abs(v: List<Double>): Double {
     var abs = 0.0
     for(e in v) abs += Math.pow(e, 2.0)
     return Math.sqrt(abs)
@@ -118,7 +118,7 @@ fun abs(v: List<Double>): Double{
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double{
+fun mean(list: List<Double>): Double {
     var aver = 0.0
     if(list.isNotEmpty()) {
         for (e in list) aver += e
@@ -135,7 +135,7 @@ fun mean(list: List<Double>): Double{
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double>{
+fun center(list: MutableList<Double>): MutableList<Double> {
     val aver = mean(list)
     for(i in 0 until list.size) list[i]-=aver
     return list
@@ -148,7 +148,7 @@ fun center(list: MutableList<Double>): MutableList<Double>{
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double{
+fun times(a: List<Double>, b: List<Double>): Double {
     var mul = 0.0
     for(i in 0 until a.size) mul+= a[i]*b[i]
     return mul
@@ -180,7 +180,7 @@ fun polynom(p: List<Double>, x: Double): Double {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double>{
+fun accumulate(list: MutableList<Double>): MutableList<Double> {
     if(list.isNotEmpty()) {
         for (i in 1 until list.size)
             list[i] += list[i-1]
@@ -195,7 +195,7 @@ fun accumulate(list: MutableList<Double>): MutableList<Double>{
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int>{
+fun factorize(n: Int): List<Int> {
     var list = mutableListOf<Int>()
     var num = n
     var fact = 2
@@ -225,7 +225,7 @@ fun factorizeToString(n: Int): String =
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int>{
+fun convert(n: Int, base: Int): List<Int> {
     val list = mutableListOf<Int>()
     var num = n
     if(n != 0) {
@@ -235,7 +235,7 @@ fun convert(n: Int, base: Int): List<Int>{
         }
         return list.reversed()
     }
-    else return listOf(0)
+    return listOf(0)
 }
 
 /**
@@ -246,12 +246,12 @@ fun convert(n: Int, base: Int): List<Int>{
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String{
+fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
-    var buf = StringBuilder(list.size)
+    var buf = StringBuilder()
     if(n == 0) return "0"
     for (i in 0 until list.size) {
-        if (list[i] > 9) buf.append((87 + list[i]).toChar()) // a = 97, b = 98, c = 99 ...
+        if (list[i] > 9) buf.append('a' + list[i] - 10) // a = 97, b = 98, c = 99 ...
         else buf.append(list[i])
     }
     return buf.toString()
@@ -264,7 +264,7 @@ fun convertToString(n: Int, base: Int): String{
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int{
+fun decimal(digits: List<Int>, base: Int): Int {
     var pow = digits.size
     var res = 0
     for(e in digits){
@@ -274,7 +274,7 @@ fun decimal(digits: List<Int>, base: Int): Int{
     return res
 }
 
-fun intPow(num: Int, pow: Int): Int{ // = Math.pow(Int)
+fun intPow(num: Int, pow: Int): Int { // = Math.pow(Int)
     var res = 1
     for(i in 1..pow)
         res *= num
@@ -290,14 +290,13 @@ fun intPow(num: Int, pow: Int): Int{ // = Math.pow(Int)
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int{
+fun decimalFromString(str: String, base: Int): Int {
     var pow = str.length
     var res = 0
     var i: Int
-    for(c in str){
-        i = c.toInt()
-        if(i <= 57) i -= 48 // {0-9} = {48-57}
-        else i -= 87 // {a-z} = {97-122}      (a-87=10, b-87=11 и т.д.)
+    for(c in str) {
+        if(c <= '9') i = c - '0' // {0-9} = {48-57}
+        else i = c - 'a' + 10 // {a-z} = {97-122}      (a-87=10, b-87=11 и т.д.)
         pow--
         res += i * intPow(base, pow)
     }
@@ -312,13 +311,13 @@ fun decimalFromString(str: String, base: Int): Int{
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String{
+fun roman(n: Int): String {
     val arab = arrayOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
     val rome = arrayOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
     var buf = StringBuilder()
     var num = n
-    var i = rome.size - 1 // указатель на последний элемент rome
-    while(num > 0){ //
+    var i = rome.size - 1
+    while(num > 0) {
         if(num < arab[i]) i--
         else {
             buf.append(rome[i])
@@ -335,11 +334,11 @@ fun roman(n: Int): String{
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String{
+fun russian(n: Int): String {
     var num = n
     val res = mutableListOf<String>()
     val words = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь",
-            "девять", "десять", "одиннадцать", "двенадцать", "триннадцать", "четырнадцать",
+            "девять", "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать",
             "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят",
             "семьдесят", "восемьдесят", "девяносто",
@@ -351,7 +350,7 @@ fun russian(n: Int): String{
     for(i in 30..100 step 10) numbers.add(i)
     for(i in 200..900 step 100) numbers.add(i)
 
-    if(num >= 1000){
+    if(num >= 1000) {
         res += getHundredsWords(num / 1000, words, numbers, true)
         res.add(getThousandsWords(num / 1000))
         num %= 1000
@@ -364,7 +363,7 @@ fun russian(n: Int): String{
 fun getThousandsWords(n: Int): String {
     var num = n
     if(num % 100 > 19) num %= 10
-    return when(num % 100){
+    return when(num % 100) {
         1 -> "тысяча"
         in 2..4 -> "тысячи"
         else -> "тысяч"
@@ -375,9 +374,9 @@ fun getHundredsWords(n: Int, words: List<String>, numbers: MutableList<Int>): Li
     var res = mutableListOf<String>()
     var num = n
     var i = numbers.size - 1
-    while(num > 0){
+    while(num > 0) {
         if(num < numbers[i]) i--
-        else{
+        else {
             res.add(words[i])
             num -= numbers[i]
         }
@@ -389,9 +388,9 @@ fun getHundredsWords(n: Int, words: List<String>, numbers: MutableList<Int>, fla
     var res = mutableListOf<String>()
     var num = n
     var i = numbers.size - 1
-    while(num > 0){
+    while(num > 0) {
         if(num < numbers[i]) i--
-        else{
+        else {
             when(num) {
                 1 ->  res.add("одна")
                 2 -> res.add("две")

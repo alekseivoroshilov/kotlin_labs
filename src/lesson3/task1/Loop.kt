@@ -60,7 +60,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Найти количество цифр в заданном числе n.
  * Например, число 1 содержит 1 цифру, 456 -- 3 цифры, 65536 -- 5 цифр.
  */
-fun digitNumber(n: Int): Int{
+fun digitNumber(n: Int): Int {
     var num = Math.abs(n)
     var i = 1
     while(num > 9){
@@ -76,7 +76,7 @@ fun digitNumber(n: Int): Int{
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int{
+fun fib(n: Int): Int {
     if(n < 3) return 1
     var f1 = fib(1)
     var f2 = fib(2)
@@ -95,7 +95,7 @@ fun fib(n: Int): Int{
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int{
+fun lcm(m: Int, n: Int): Int {
     var a = m
     var b = n
     while(a != b){ // нахождение НОД (алгоритм Евклида)
@@ -110,9 +110,13 @@ fun lcm(m: Int, n: Int): Int{
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int{
+fun minDivisor(n: Int): Int {
     var i = 2
-    while(n % i != 0 && i < Math.sqrt(n.toDouble())) i++
+    val sqr = Math.sqrt(n.toDouble()).toInt()
+    while(n % i != 0){
+        if(i > sqr) return n
+        i++
+    }
     return i
 }
 
@@ -121,7 +125,7 @@ fun minDivisor(n: Int): Int{
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int{
+fun maxDivisor(n: Int): Int {
     var i = n-1
     while(n % i != 0) i--
     return i
@@ -134,10 +138,14 @@ fun maxDivisor(n: Int): Int{
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean{
-    var i = Math.min(m, n)
-    while(m % i != 0 || n % i != 0) i--
-    return i == 1
+fun isCoPrime(m: Int, n: Int): Boolean { // 6.8s
+    var a = m
+    var b = n
+    while(a != b) { // нахождение НОД (алгоритм Евклида)
+        if(a > b) a -= b
+        else b -= a
+    }
+    return a == 1
 }
 
 /**
@@ -160,14 +168,14 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double{
+fun sin(x: Double, eps: Double): Double {
     val arg = x % (Math.PI * 2)
     var member = x
     var sin = 0.0
     var pow = 1.0
     var xpow = arg
     var fact = 1.0
-    while(Math.abs(member) > eps){
+    while(Math.abs(member) > eps) {
         member = xpow / fact
         sin += member
         pow += 2.0
@@ -184,14 +192,14 @@ fun sin(x: Double, eps: Double): Double{
  * cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun cos(x: Double, eps: Double): Double{
+fun cos(x: Double, eps: Double): Double {
     val arg = x % (Math.PI * 2)
     var member = x
     var cos = 1.0
     var pow = 2.0
     var xpow = -arg * arg
     var fact = 2.0
-    while(Math.abs(member) > eps){
+    while(Math.abs(member) > eps) {
         member = xpow / fact
         cos += member
         pow += 2.0
@@ -207,10 +215,10 @@ fun cos(x: Double, eps: Double): Double{
  * Поменять порядок цифр заданного числа n на обратный: 13478 -> 87431.
  * Не использовать строки при решении задачи.
  */
-fun revert(n: Int): Int{
+fun revert(n: Int): Int {
     var i = n
     var res = 0
-    while(i > 0){
+    while(i > 0) {
         res = res * 10 + i % 10
         i /= 10
     }
@@ -232,8 +240,8 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  * Для заданного числа n определить, содержит ли оно различающиеся цифры.
  * Например, 54 и 323 состоят из разных цифр, а 111 и 0 из одинаковых.
  */
-fun hasDifferentDigits(n: Int): Boolean{ // попарное сравнение символов
-    var str = n.toString()
+fun hasDifferentDigits(n: Int): Boolean { // попарное сравнение символов
+    val str = n.toString()
     for(i in 0..(str.length - 2))
         if(str[i] != str[i + 1]) return true
     return false
@@ -246,20 +254,14 @@ fun hasDifferentDigits(n: Int): Boolean{ // попарное сравнение 
  * 149162536496481100121144...
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
-fun main(args: Array<String>){
-//    println(squareSequenceDigit(1)) // 1
-//    println(squareSequenceDigit(2)) // 4
-//    println(squareSequenceDigit(7)) // 5
-    println(squareSequenceDigit(12)) // 6
-}
-fun squareSequenceDigit(n: Int): Int{
+fun squareSequenceDigit(n: Int): Int {
     var i = 0
     var j = 0
-    while(j < n){ // пока число цифр не достигло требуемого
+    while(j < n) { // пока число цифр не достигло требуемого
         i++
-        j += digitNumber(i*i) // суммирование кол-ва цифр квадратов
+        j += digitNumber(i * i) // суммирование кол-ва цифр квадратов
     }
-    var res = i*i
+    var res = i * i
     for(c in n until j) res /= 10
     return res % 10
 }
@@ -271,10 +273,10 @@ fun squareSequenceDigit(n: Int): Int{
  * 1123581321345589144...
  * Например, 2-я цифра равна 1, 9-я 2, 14-я 5.
  */
-fun fibSequenceDigit(n: Int): Int{
+fun fibSequenceDigit(n: Int): Int {
     var i = 0
     var j = 0
-    while(j < n){ // пока число цифр не достигло требуемого
+    while(j < n) { // пока число цифр не достигло требуемого
         i++
         j += digitNumber(fib(i))
     }

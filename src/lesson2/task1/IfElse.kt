@@ -52,9 +52,9 @@ fun ageDescription(age: Int): String =
  */
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
-                   t3: Double, v3: Double): Double{
+                   t3: Double, v3: Double): Double {
     val hS = (t1 * v1 + t2 * v2 + t3 * v3) / 2.0
-    return when{
+    return when {
         hS < t1 * v1 -> hS / v1
         hS < (t1 * v1 + t2 * v2) -> t1 + (hS - t1 * v1) / v2
         else -> t1 + t2 + (hS - t1 * v1 - t2 * v2) / v3
@@ -72,10 +72,10 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int{
+                       rookX2: Int, rookY2: Int): Int {
     val rook1 = (rookX1 - kingX) * (rookY1 - kingY) // при наличии пересечений =0
     val rook2 = (rookX2 - kingX) * (rookY2 - kingY) // аналогично для 2-й ладьи
-    return when(rook1 + rook2){
+    return when(rook1 + rook2) {
         0 ->  3 // r1==r2==0
         rook1 ->  2 // r2==0
         rook2 ->  1 // r1==0
@@ -95,10 +95,10 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  */
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int{
+                          bishopX: Int, bishopY: Int): Int {
     val bishop = Math.abs(kingX - bishopX) == Math.abs(kingY - bishopY) // true если угрожает
     val rook = rookX == kingX || rookY == kingY // аналогично
-    return when{
+    return when {
         bishop && rook -> 3 // r==b==0
         bishop -> 2 // r==0
         rook -> 1 // b==0
@@ -114,10 +114,10 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int{
+fun triangleKind(a: Double, b: Double, c: Double): Int {
     val max = Math.max(Math.max(a, b), c)
     val pyth = 2.0 * max * max - (a * a + b * b + c * c) // c^2 - (a^2 + b^2)
-    return when{
+    return when {
         a + b + c <= 2 * max -> -1
         pyth == 0.0 -> 1
         pyth > 0.0 -> 2
@@ -134,7 +134,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
-    when{
+    when {
         a in c..d -> Math.min(b, d) - a
         c in a..b -> Math.min(b, d) - c
         else -> -1
