@@ -73,13 +73,13 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int {
-    val rook1 = (rookX1 - kingX) * (rookY1 - kingY) // при наличии пересечений =0
-    val rook2 = (rookX2 - kingX) * (rookY2 - kingY) // аналогично для 2-й ладьи
-    return when(rook1 + rook2) {
-        0 ->  3 // r1==r2==0
-        rook1 ->  2 // r2==0
-        rook2 ->  1 // r1==0
-        else ->  0 // r1>0 && r2>0
+    val rook1 = (rookX1 - kingX) * (rookY1 - kingY) == 0 // если угроза - true
+    val rook2 = (rookX2 - kingX) * (rookY2 - kingY) == 0 // аналогично
+    return when {
+        rook1 && rook2 -> 3
+        rook2 -> 2
+        rook1 -> 1
+        else ->  0
     }
 }
 

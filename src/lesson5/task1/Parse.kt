@@ -217,7 +217,7 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     val format = Regex("""^([^;]+)\s([0-9]+(.[0-9]+)?)(;([^;]+)\s([0-9]+(.[0-9]+)?))*""")
-    if(!description.matches(format)) return "incorrect"
+    if(!description.matches(format)) return ""
     val parts = Regex("""\s|(;\s)""").split(description)
     var max = parts[1].toFloat()
     var max_index = 1
