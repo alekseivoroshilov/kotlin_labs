@@ -216,8 +216,8 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть положительными
  */
 fun mostExpensive(description: String): String {
-    val format = Regex("""^([^;]+)\s([0-9]+.[0-9]+)(;\s([^;]+)\s([0-9]+.[0-9]+))*""")
-    if(!description.matches(format)) return ""
+    val format = Regex("""^([^;]+)\s([0-9]+(.[0-9]+)?)(;([^;]+)\s([0-9]+(.[0-9]+)?))*""")
+    if(!description.matches(format)) return "incorrect"
     val parts = Regex("""\s|(;\s)""").split(description)
     var max = parts[1].toFloat()
     var max_index = 1
@@ -312,7 +312,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '>' -> sensor++
             '<' -> sensor--
         }
-        if(sensor !in 0..cells) throw IllegalStateException("shift commands\ncells = $cells ; sensor = $sensor")
+        if(sensor !in 0 until cells) throw IllegalStateException("shift commands\ncells = $cells ; sensor = $sensor")
         cmd_indexer++
         cmd_counter--
     }
