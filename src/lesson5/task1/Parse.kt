@@ -115,10 +115,10 @@ fun dateDigitToStr(digital: String): String{
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String{
-    val res = Regex("""\s|-|\(|\)""").replace(phone, "") // удаление " ", "-", "(", ")"
-    val format = Regex("""^(\+)?([0-9]+)$""")
-    if(!res.matches(format)) return "" // соответствие формату
-    return res
+    val res = Regex("""[\s-]""").replace(phone, "") // удаление " ", "-"
+    val format = Regex("""^(\+[0-9]+)?(\([0-9]+\))?([0-9]+)$""")
+    if(!res.matches(format)) return ""
+    return Regex("""[()]""").replace(res, "")
 }
 
 /**
@@ -132,15 +132,15 @@ fun flattenPhoneNumber(phone: String): String{
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int{
-    val format = Regex("""^([0-9]+|%|-)(\s+([0-9]+|%|-))*$""")
+    val format = Regex("""[0-9%\-\s]*""")
     val d = Regex("""[0-9]""")
     if(!jumps.matches(format) || !jumps.contains(d)) return -1 // не format || не содержит цифр
     val numeric = Regex("""%|-""").replace(jumps,"")
     val nums = Regex("""\s+""").split(numeric).toMutableList()
-    val res = mutableListOf(0.0)
+    val res = mutableListOf(0)
     for(e in nums)
-        if(e != "") res.add(e.toDouble())
-    return res.max()!!.toInt() // nullableInt to nonNullableInt
+        if(e != "") res.add(e.toInt())
+    return res.max()!! // nullableInt to nonNullableInt
 }
 
 /**
@@ -154,7 +154,7 @@ fun bestLongJump(jumps: String): Int{
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val format = Regex("""^(([0-9]+)\s(%|\+|-)+)(\s(([0-9]+)\s(%|\+|-)+))*$""")
+    val format = Regex("""[0-9%\+\-\s]*""")
     if(!jumps.matches(format)) return -1
     val parts = jumps.split(" ")
     val res = mutableListOf(0)
@@ -216,7 +216,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть положительными
  */
 fun mostExpensive(description: String): String {
-    val format = Regex("""^([А-Яа-я]+)\s([0-9]+.[0-9]+)(;\s([А-Яа-я]+)\s([0-9]+.[0-9]+))*""")
+    val format = Regex("""^([^;]+)\s([0-9]+.[0-9]+)(;\s([^;]+)\s([0-9]+.[0-9]+))*""")
     if(!description.matches(format)) return ""
     val parts = Regex("""\s|(;\s)""").split(description)
     var max = parts[1].toFloat()
@@ -324,7 +324,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 * значение - индекс соответствующей ей закрывающей скобки
 */
 fun commandsChecking(line: String): Map<Int, Int> {
-    val format = Regex("""[<>\+\-\[\]\s]+""")
+    val format = Regex("""[<>\+\-\[\]\s]*""")
     if(!line.matches(format)) throw IllegalArgumentException("unacceptable symbols")
     val opening = mutableListOf<Int>() // список открывающих скобок (используется как стек)
     val brackets = mutableMapOf<Int, Int>() // для хранения индексов соответствующих скобок
