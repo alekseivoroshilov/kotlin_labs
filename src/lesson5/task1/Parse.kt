@@ -178,7 +178,7 @@ fun plusMinus(expression: String): Int {
     if(!expression.matches(format)) throw IllegalArgumentException("for input string \"$expression\"")
     val parts = expression.split(" ")
     var res = parts[0].toInt()
-    for(i in 1 until parts.size step 2){ // чтение символов операций
+    for(i in 1 until parts.size step 2) { // чтение символов операций
         if(parts[i] == "-") res -= parts[i + 1].toInt()
         else res += parts[i + 1].toInt()
     }
@@ -303,7 +303,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val conv = mutableListOf<Int>() // конвейер
     for(i in 0 until cells) conv.add(0)
 
-    while(cmd_counter > 0 && cmd_indexer < commands.length){
+    while(cmd_counter > 0 && cmd_indexer < commands.length) {
         when(commands[cmd_indexer]){
             '+' -> conv[sensor]++
             '-' -> conv[sensor]--

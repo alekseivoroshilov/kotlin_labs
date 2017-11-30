@@ -199,7 +199,7 @@ fun factorize(n: Int): List<Int> {
     var list = mutableListOf<Int>()
     var num = n
     var fact = 2
-    while(num > 1){
+    while(num > 1) {
         if(num % fact == 0) {
             list.add(fact)
             num /= fact
